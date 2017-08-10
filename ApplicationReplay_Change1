@@ -1,0 +1,24 @@
+#!/bin/bash
+#************************************************************************************************#
+# Script: ApplicationReplay_Change1                                                              #
+# Usage : Script to make change1 during Demo runtime                                             #
+#         Changes s_oacore_nprocs to 2 and s_forms_jvm_start_options to 512M                     #
+# Usage:   $0                                                                                    #
+# When          Who              What                                                            #
+# ------------------------------------------------------------------                             #
+# 23-MAY-2012   ARCHANA JOSHI    Initial Version                                                 #
+#************************************************************************************************#
+
+export logfile=ApplicationReplay_Change1.log  #change this to unified log  loaction later
+date >>$logfile
+#***** VERIFYING IF USER IS ROOT ****#
+ID=`id -u`
+if [ ${ID} -ne 0 ]; then
+        echo ""
+        echo "This script should be run as root user."
+        echo ""
+        exit
+fi
+echo "#####################################" >> $logfile
+COMMAND="/dss/operations/APR_scripts/ApplicationReplay_Change1_applmgr"
+su - applmgr -c "${COMMAND}"

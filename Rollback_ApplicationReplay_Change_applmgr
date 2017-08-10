@@ -1,0 +1,28 @@
+#!/bin/bash
+#************************************************************************************************#
+# Script: Rollback_ApplicationReplay_Change1                                                     #
+# Usage : Script to rollback change1 or change2 during Demo runtime                              #
+# Usage:   $0                                                                                    #
+# When          Who              What                                                            #
+# ------------------------------------------------------------------                             #
+# 23-MAY-2012   ARCHANA JOSHI    Initial Version                                                 #
+#************************************************************************************************#
+
+export logfile=Rollback_ApplicationReplay_Change.log  #change this to unified log  loaction later
+date >>$logfile
+#***** VERIFYING IF USER IS APPLMGR ****#
+ID=`id -u`
+if [ ${ID} -ne 501 ]; then
+        echo ""
+        echo "This script should be run as applmgr user."
+        echo ""
+        exit
+fi
+echo "#####################################" >> $logfile
+cp /dbfiles/common/appltop/EBSSRV_ebssrv.xml_APRDSS_preJVMtuning /dbfiles/common/appltop/EBSSRV_ebssrv.xml
+adconfig.sh contextfile=$CONTEXT_FILE run=INSTE8_SETUP  appspass=apps| tee -a $logfile
+echo "#####################################" >> $logfile
+adapcctl.sh stop| tee -a $logfile
+sleep 5
+echo "#####################################" >> $logfile
+adapcctl.sh start| tee -a $logfile

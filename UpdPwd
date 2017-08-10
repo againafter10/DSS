@@ -1,0 +1,123 @@
+#************************************************************************************************#
+# Script: UpdPwd                                                                                 #
+# usage: UpdPwd hostname.oracelads.com 01 user user_pwd demo_reference                           #
+# This script must be run as oracle                                                              #
+# This script updates the sysman password in Cloud Control repository and adsweb database        #
+# When          Who              What                                                            #
+# ------------------------------------------------------------------                             #
+# 14-JUN-2012   ARCHANA JOSHI    Initial Version                                                 #
+#************************************************************************************************#
+
+#!/bin/bash
+ID=`id -u`
+if [ ${ID} = 0 ]; then
+        echo "This script should be run as oracle user."
+        exit
+fi
+
+function echo2 {
+   echo ${1};
+   echo "${1}" >> ${logfile};
+}
+
+
+sysmanpwdrst () {
+. $DEMO_HOME/profiles/cc/profile.oms
+emctl stop oms
+emctl config oms -change_repos_pwd -use_sys_pwd -sys_pwd em12cdev  -new_pwd ${1}
+emctl stop oms -all
+emctl start oms
+echo ${1} >$DEMO_HOME/refresh/.sysman/.password
+echo "Current sysman changed to " `cat $DEMO_HOME/refresh/.sysman/.password`
+}
+
+if [ $# -eq 0 ]
+then
+echo "$0 : You must input hostname as argument "
+exit 1
+fi
+if [ "${3}" = "sysman" ]; then
+     username=${3}
+else
+    username=`expr substr $3 1 9`$2
+echo "username " $username
+fi
+
+logfile="${DL}/ResetPwd.log"
+
+node_association=$1
+param_name=$4
+demo_reference=$5
+echo "parameters  $username,$node_association,$param_name,$demo_reference"
+#exit
+. $DEMO_HOME/profiles/profile.refresh
+sqlplus -s adsweb_refresh/ref@adsweb  <<eof   >> ${logfile}
+set line 100;
+set hea off;
+set feed off;
+set echo off;
+spool /tmp/tail${host_stem}.lst
+select dbms_random.string('A',4) || trunc(dbms_random.value(1000,9999)) FROM dual;
+spool off;
+exit;
+eof
+# Report status and update log file
+
+if [ $? -ne 0 ]
+then
+   echo2 "ERROR: Password generation failed"
+   exit 1;
+else
+   echo2 "Password generation Successful"
+fi
+
+# Retrieve new password into variable
+
+password=`tail  -1l /tmp/tail${host_stem}.lst`; export password
+echo $password
+echo 'about to update adsweb'
+#
+echo "parameters  $username,$node_association,$param_name,$demo_reference"
+sqlplus  adsweb_refresh/ref@adsweb  <<eof   >> ${logfile}
+      set echo on;
+      set feed on;
+      update tds_demo_accounts
+         set da_par_value = rtrim('${password}')
+         where da_association = '${node_association}'
+            and da_name = '${demo_reference}'
+            and da_par_name = '${param_name}';
+      commit;
+      exit
+eof
+if [ `grep -c "0 rows updated" ${logfile}` -gt 0 ]; then
+   echo2 "ERROR: Password update in adsweb failed"
+else
+   echo2 "password update in adsweb Successful "
+fi
+
+if [ ${username} = 'sysman' ]; then
+         sysmanpwdrst $password
+         #echo "sysmanpassword ${sysmanPwd}"
+          
+#
+         if [ $? -ne 0 ]
+         then
+            echo2 "ERROR: Password update  using sysman  for user ${username} failed"
+            exit 1;
+         else
+            echo2 "password update in em12c Successful "
+         fi
+else
+        emcli setup -url="http://unit1983.oracleads.com:7788/em" -username=sysman -password=${sysmanPwd} 2>/dev/null
+        emcli sync 2>/dev/null
+        emcli login -username=sysman -password=${sysmanPwd}  2>/dev/null
+        emcli modify_user -name="${username}" -password=${password} >>  ${logfile};
+        if [ $? -ne 0 ]
+        then
+           echo2 "ERROR: Password update  using emcli for user ${username} failed"
+           exit 1;
+        else
+           echo2 "password update in em12c Successful "
+        fi
+fi
+

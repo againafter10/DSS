@@ -1,0 +1,23 @@
+#!/bin/bash
+#************************************************************************************************#
+# Script: Rollback_ApplicationReplay_Change1                                                     #
+# Usage : Script to rollback change1 or change2 during Demo runtime                              #
+# Usage:   $0                                                                                    #
+# When          Who              What                                                            #
+# ------------------------------------------------------------------                             #
+# 23-MAY-2012   ARCHANA JOSHI    Initial Version                                                 #
+#************************************************************************************************#
+
+export logfile=Rollback_ApplicationReplay_Change.log  #change this to unified log  location later
+date >>$logfile
+#***** VERIFYING IF USER IS ROOT ****#
+ID=`id -u`
+if [ ${ID} -ne 0 ]; then
+        echo ""
+        echo "This script should be run as root user."
+        echo ""
+        exit
+fi
+echo "#####################################" >> $logfile
+COMMAND="/dss/operations/APR_scripts/Rollback_ApplicationReplay_Change_applmgr"
+su - applmgr -c "${COMMAND}"

@@ -1,0 +1,25 @@
+#!/bin/bash
+#************************************************************************************************#
+# Script: ApplicationReplay_Change2                                                              #
+# Usage : Script to make change2 during Demo runtime                                             #
+#         Changes s_oacore_jvm_start_options parameter -Xmx from 1024M to 2048M                  #
+#         Includes change1 in the context file
+# Usage:   $0                                                                                    #
+# When          Who              What                                                            #
+# ------------------------------------------------------------------                             #
+# 23-MAY-2012   ARCHANA JOSHI    Initial Version                                                 #
+#************************************************************************************************#
+
+export logfile=ApplicationReplay_Change2.log  #change this to unified log  loaction later
+date >>$logfile
+#***** VERIFYING IF USER IS ROOT ****#
+ID=`id -u`
+if [ ${ID} -ne 0 ]; then
+        echo ""
+        echo "This script should be run as root user."
+        echo ""
+        exit
+fi
+echo "#####################################" >> $logfile
+COMMAND="/dss/operations/APR_scripts/ApplicationReplay_Change2_applmgr"
+su - applmgr -c "${COMMAND}"
