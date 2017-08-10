@@ -1,0 +1,104 @@
+#************************************************************************************************#
+# Script: verifyStart                                                                            #
+# Usage : script to verify start status of EBS1 components                                       #
+# Usage:                                                                                         #
+# When          Who              What                                                            #
+# ------------------------------------------------------------------                             #
+# 11-MAR-2013   ARCHANA JOSHI    Initial Version                                                 #
+#************************************************************************************************#
+#!/bin/bash
+ID=`id -u`
+if [ ${ID} -ne 0 ]; then
+	echo "This script should be run as root "
+	exit
+fi
+let failed=0;
+ 
+. ~oracle/profile.demo
+export logfile=$DL/ebs_status.log
+
+newline="\n"
+echo -e $newline >> $logfile
+
+
+agent_status()
+{
+
+ COMMAND="$1/bin/ebs/agent_status.sh"
+ su - applmgr -c "${COMMAND}"
+
+}
+
+
+ebs_status()
+{
+ COMMAND="$1/bin/ebs/ebs_status.sh"
+ "${COMMAND}"
+
+}
+
+echo -e $newline >> $logfile
+echo "========================================================================================"|tee -a $logfile
+echo "Verifying Status of  ALL EBS2 COMPONENTS  on `hostname` `date`"  $logfile |tee -a $logfile
+echo "========================================================================================" |tee -a $logfile
+echo -e $newline|tee -a $logfile
+
+
+#-------------------------------
+#Verifying  DB  startup 
+#-------------------------------
+
+status=`ps -ef|grep -i pmon_ebssrv|grep -v grep|wc -l`
+if [ $status = 1 ]; then
+echo "DB started OK " |tee -a $logfile
+echo -e $newline|tee -a $logfile
+else
+echo "DB check  failed" |tee -a $logfile
+echo -e $newline|tee -a $logfile
+let failed=failed+1
+fi
+
+
+
+
+#-------------------------------
+#Verifying  AGENT  startup
+#-------------------------------
+status=`agent_status $DEMO_HOME`
+if [ `echo $status  |grep -i ready|wc -l` -eq 1 ]; then
+echo  "Agent  started OK  " |tee -a $logfile
+echo -e $newline|tee -a $logfile
+else
+echo  "Agent check  failed" |tee -a $logfile
+echo -e $newline|tee -a $logfile
+let failed=failed+1
+fi
+
+
+
+
+#-------------------------------
+#Verifying  ebs  startup 
+#-------------------------------
+status=`ebs_status $DEMO_HOME`
+if [ `echo $status  |grep -i running |wc -l` -eq 1 ];
+ then
+echo "EBS started OK " |tee -a $logfile
+echo -e $newline|tee -a $logfile
+else
+echo "EBS check  failed" |tee -a $logfile
+echo -e $newline|tee -a $logfile
+let failed=failed+1
+fi
+
+
+
+
+
+if [ $failed -eq 0 ]; then 
+echo "All Components of EBS Target Started Successfully" |tee -a $logfile
+exit 0 
+else 
+echo  "${failed} Component(s) Failed to Start for EBS Target" |tee -a $logfile
+exit 1
+fi 

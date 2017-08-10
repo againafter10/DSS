@@ -1,0 +1,64 @@
+#!/bin/bash
+#************************************************************************************************#
+# Script: Resetpwd.sh                                                                            #
+# Usage :  usage: Resetpwd.sh  hostname.oracleads.com                                            #
+# This script is used to reset the password for demo users                                       #
+# This script must be run as root                                                                #
+# When          Who              What                                                            #
+# ------------------------------------------------------------------                             #
+# 28-MAY-2013   ARCHANA JOSHI    Initial Version                                                 #
+#************************************************************************************************#
+ID=`id -u`
+if [ ${ID} -ne 0 ] ; then
+    echo "This script must be run as root."
+    exit
+fi
+
+
+if [ $# -eq 0 ] ; then
+echo "Usage: $0 {hostname}.oracleads.com"
+exit 1
+fi
+
+
+case $1 in
+
+'unit3511.oracleads.com')
+	. ~oracle/.bashrc
+	export logfile=${DL}/ResetPwd_$1.log
+	rm $logfile
+	touch $logfile
+	chmod 777 $logfile
+	#Reseting Password for demo user
+	COMMAND="${DEMO_HOME}/refresh/scripts/UpdPwd $1 01 sysman CC_SUPERADMIN_PASSWORD EBS"
+	echo $COMMAND
+	su - oracle -c "${COMMAND}"
+	echo "Completed password reset for  $1 at `date`" >> $logfile
+	exit
+	;;
+
+
+'unit3516.oracleads.com')
+        . /dss/operations/profiles/ebs/demo.profile 
+       export logfile=${DL}/ResetPwd_$1.log
+       chmod 777 $logfile
+        rm $logfile
+        touch $logfile
+        #Setting same password as sysman for sysadmin user also
+        password=`cat $DEMO_HOME/refresh/.sysman/.password`
+        echo $password
+        #Reseting SYSADMIN Password for EBS
+        COMMAND="${DEMO_HOME}/refresh/ResetSysadmin.sh $logfile $password"
+        echo $COMMAND
+        su - applmgr -c "${COMMAND}"
+        echo "Completed password reset for $1 at `date` >>  $logfile
+        exit
+	;;
+
+
+*)
+echo "I am here ,adam"
+	echo "Usage: $0 {hostname}.oracleads.com"
+	exit 1
+
+esac

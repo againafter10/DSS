@@ -1,0 +1,137 @@
+#************************************************************************************************#
+# Script: UpdPwd                                                                                 #
+# usage: UpdPwd hostname.oracelads.com 01 user user_pwd demo_reference                           #
+# This script must be run as oracle                                                              #
+# This script updates the sysman password in Cloud Control repository and adsweb database        #
+# When          Who              What                                                            #
+# ------------------------------------------------------------------                             #
+# 28-MAY-2013   ARCHANA JOSHI    Initial Version                                                 #
+#************************************************************************************************#
+
+#!/bin/bash
+ID=`id -u`
+if [ ${ID} = 0 ]; then
+        echo "This script should be run as oracle user."
+        exit
+fi
+
+function echo2 {
+   echo ${1};
+   echo "${1}" >> ${logfile};
+}
+
+
+### Function 1
+### SYSMAN user password reset function
+sysmanpwdrst () {
+. $DEMO_HOME/profiles/cc/oms.profile
+echo "***** Stopping OMS `date` *****" >> $2
+echo2 >> $2
+emctl stop oms >> $2
+echo2 >> $2
+echo "***** Changing Sysman password `date` *****" >> $2
+echo2 >> $2
+emctl config oms -change_repos_pwd -use_sys_pwd -sys_pwd em12cdev  -new_pwd ${1} >>  $2
+echo2 >> $2
+echo "***** Stopping OMS -all `date` *****" >> $2
+echo2 >> $2
+emctl stop oms -all >> $2
+echo2 >> $2
+echo "***** Starting OMS `date` *****" >> $2
+echo2 >> $2
+emctl start oms >> $2
+echo2 >> $2
+echo ${1} >$DEMO_HOME/refresh/.sysman/.password
+echo "Current sysman changed to " `cat $DEMO_HOME/refresh/.sysman/.password`
+}
+
+
+
+#####################
+### Main Finction ###
+#####################
+if [ $# -eq 0 ]
+then
+echo "$0 : You must input hostname as argument "
+exit 1
+fi
+
+### copying the tnsnames.ora to oracle home $TNS_ADMIN
+cp /dss/operations/refresh/tnsnames.ora /app/oracle/product/11.2.0/dbhome_1/network/admin
+
+ 
+if [ "${3}" = "sysman" ]; then
+     username=${3}
+else
+    username=`expr substr $3 1 9`$2
+echo "username " $username
+fi
+
+logfile="${DL}/ResetPwd_$1.log"
+
+node_association=$1
+param_name=$4
+demo_reference=$5
+echo "parameters  $username,$node_association,$param_name,$demo_reference"
+#exit
+. $DEMO_HOME/profiles/refresh.profile
+sqlplus -s adsweb_refresh/ref@adsweb  <<eof   >> ${logfile}
+set line 100;
+set hea off;
+set feed off;
+set echo off;
+spool /tmp/tail${host_stem}.lst
+select dbms_random.string('A',4) || trunc(dbms_random.value(1000,9999)) FROM dual;
+spool off;
+exit;
+eof
+# Report status and update log file
+
+if [ $? -ne 0 ]
+then
+   echo2 "ERROR: Random Password generation failed"
+   exit 1;
+else
+   echo2 "Random Password generation Successful"
+fi
+
+# Retrieve new password into variable
+
+password=`tail  -1l /tmp/tail${host_stem}.lst`; export password
+echo $password
+echo 'about to update adsweb'
+#
+echo "parameters  $username,$node_association,$param_name,$demo_reference"
+sqlplus  adsweb_refresh/ref@adsweb  <<eof   >> ${logfile}
+      set echo on;
+      set feed on;
+      update tds_demo_accounts
+         set da_par_value = rtrim('${password}')
+         where da_association = '${node_association}'
+            and da_name = '${demo_reference}'
+            and da_par_name = '${param_name}';
+
+
+update tds_demo_accounts set da_par_value = rtrim('welcome1') where da_association = '${node_association}' and da_name = '${demo_reference}' and da_par_name = 'CC_REQUESTOR_PASSWORD';
+
+update tds_demo_accounts set da_par_value = rtrim('welcome1') where da_association = '${node_association}' and da_name = '${demo_reference}' and da_par_name = 'CC_APPROVAL_PASSWORD';
+
+      commit;
+      exit
+eof
+if [ `grep -c "0 rows updated" ${logfile}` -gt 0 ]; then
+   echo2 "ERROR: Password update in adsweb failed"
+else
+   echo2 "Password update in adsweb Successful "
+fi
+
+### Changing password for sysman and change approval users
+echo "$logfile is " $logfile
+sysmanpwdrst $password $logfile
+         if [ $? -ne 0 ]
+         then
+            echo2 "ERROR: Password update for sysman user failed"
+            exit 1;
+         else
+            echo2 "Password update for sysman user successful"
+         fi

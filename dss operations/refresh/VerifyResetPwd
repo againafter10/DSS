@@ -1,0 +1,52 @@
+#************************************************************************************************#
+#!/bin/bash                                                                                      #
+# Script: VerifyResetPwd.sh                                                                      #
+# usage: VerifyResetPwd.sh                                                                       #
+# This script must be run as oracle                                                              #
+# This script checks if sysman password change was successful or not                             #
+# When          Who              What                                                            #
+# ------------------------------------------------------------------                             #
+# 28-MAY-2013   ARCHANA JOSHI    Initial Version                                                 #
+#************************************************************************************************#
+######################################################################
+
+ID=`id -u`
+
+if [ ${ID} = 0 ]; then
+        echo "This script should be run as oracle user."
+        exit
+fi
+
+
+if [  $# -eq 0 ] ; then
+ echo " ERROR: Enter system name as input "
+ exit
+fi
+
+#. ~oracle/.bashrc
+logfile="$DEMO_LOGS/ResetPwd_$1.log"
+
+if  [ "$1" =  "unit3511.oracleads.com" ]
+ then
+
+	#status=`grep -c "Successful" ${logfile}`
+	#if [ $status -eq 6 ]; then
+        status=`grep -c "Password update for sysman user successful" ${logfile}`
+        if [ $status -eq 1 ]; then
+   	echo "Password Reset successful"
+   	exit 0
+	else
+   	echo "Password Reset Failed"
+   	exit 1
+	fi
+
+else
+	status=`grep -c Successful ${logfile}`
+	if [ $status -eq 1 ]; then
+   	echo "Password Reset successful"
+   	exit 0
+	else
+   	echo "Password Reset Failed"
+  	exit 1
+	fi
+fi

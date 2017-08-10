@@ -1,0 +1,169 @@
+#!/bin/bash
+#************************************************************************************************#
+# Script: ccctl   (64bit version - Inline with DMT)                                              #
+# Usage : Main Wrapper script to call service scripts for component CC                           #
+# Usage:   $0 { start|stop|status } {db|oms|agent|all}/$0 verifyStart                            #
+# When          Who              What                                                            #
+# ------------------------------------------------------------------                             #
+# 21-APR-2012   ARCHANA JOSHI    Initial Version                                                 #
+#************************************************************************************************#
+
+#***** VERIFYING IF USER IS ROOT ****#
+ID=`id -u`
+if [ ${ID} -ne 0 ]; then
+	echo ""
+	echo "This script should be run as root user."
+	echo ""
+	exit
+fi
+
+. ~oracle/.bashrc
+
+#**** Functions Defined Here ****#
+
+# Function: Usage() :- To display how the script is to be used
+Usage () {
+
+	echo ""
+	echo "Usage: $0 { start|stop|status } {db|oms|agent|all}/$0 verifyStart"
+	echo ""
+}
+
+# Function: startAll() :- To Start all Processes under Component CC
+startAll () {
+        clear	
+	echo "Starting all Processes under Component CC"
+	COMMAND="${DEMO_HOME}/bin/cc/db_start.sh"
+	su - oracle -c "${COMMAND}"
+	COMMAND="${DEMO_HOME}/bin/cc/agent_start.sh"
+	su - oracle -c "${COMMAND}"
+	COMMAND="${DEMO_HOME}/bin/cc/oms_start.sh"
+	su - oracle -c "${COMMAND}"
+}
+
+# Function: stopAll() :- To Stop all Processes under Component CC
+stopAll () {
+        clear
+        echo "Stopping all Processes under Component CC"
+        COMMAND="${DEMO_HOME}/bin/cc/oms_stop.sh"
+        su - oracle -c "${COMMAND}"
+	COMMAND="${DEMO_HOME}/bin/cc/agent_stop.sh"
+        su - oracle -c "${COMMAND}"
+	COMMAND="${DEMO_HOME}/bin/cc/db_stop.sh"
+        su - oracle -c "${COMMAND}"
+}
+
+# Function: statusAll() :- To check status all Processes under Component CC
+statusAll () {
+        clear
+        echo "***** Checking Status of all Processes under Component CC ******"
+        COMMAND="${DEMO_HOME}/bin/cc/db_status.sh"
+        su - oracle -c "${COMMAND}"
+        COMMAND="${DEMO_HOME}/bin/cc/agent_status.sh"
+        su - oracle -c "${COMMAND}"
+        COMMAND="${DEMO_HOME}/bin/cc/oms_status.sh"
+        su - oracle -c "${COMMAND}"
+}
+
+verifystart () {
+        clear
+        COMMAND="${DEMO_HOME}/bin/cc/verifyStart"
+	"${COMMAND}"
+}
+
+
+
+case "$1" in
+	'start')
+		case "$2" in
+			'db' )
+			COMMAND="${DEMO_HOME}/bin/cc/db_start.sh"
+	                su - oracle -c "${COMMAND}"
+			;;
+
+			'agent' )
+			COMMAND="${DEMO_HOME}/bin/cc/agent_start.sh"
+                        su - oracle -c "${COMMAND}"
+			;;
+		
+			'oms' )
+			COMMAND="${DEMO_HOME}/bin/cc/oms_start.sh"
+			su - oracle -c "${COMMAND}"
+			;;
+
+			'all' )
+			startAll;
+			;;
+		*)
+		echo ""
+		Usage;
+	        ;;
+		esac
+		;;
+	'stop')
+                case "$2" in
+                        'db' )
+                        COMMAND="${DEMO_HOME}/bin/cc/db_stop.sh"
+                        su - oracle -c "${COMMAND}"
+                        ;;
+
+                        'agent' )
+                        COMMAND="${DEMO_HOME}/bin/cc/agent_stop.sh"
+                        su - oracle -c "${COMMAND}"
+                        ;;
+
+                        'oms' )
+                        COMMAND="${DEMO_HOME}/bin/cc/oms_stop.sh"
+                        su - oracle -c "${COMMAND}"
+                        ;;
+
+                        'all' )
+                        stopAll;
+                        ;;                
+		*)
+		echo ""
+                Usage;
+                ;;
+                esac
+                ;;
+	'status')
+                case "$2" in
+                        'db' )
+                        COMMAND="${DEMO_HOME}/bin/cc/db_status.sh"
+                        su - oracle -c "${COMMAND}"
+                        ;;
+
+                        'agent' )
+                        COMMAND="${DEMO_HOME}/bin/cc/agent_status.sh"
+                        su - oracle -c "${COMMAND}"
+                        ;;
+
+                        'oms' )
+                        COMMAND="${DEMO_HOME}/bin/cc/oms_status.sh"
+                        su - oracle -c "${COMMAND}"
+                        ;;
+
+                        'all' )
+                        statusAll
+                        ;;
+		*)
+		echo ""
+		Usage;
+                ;;
+                esac
+                ;;
+
+        'verifyStart')
+		verifystart
+		if [ $? -eq 0 ]; then
+                exit 0
+		else
+		exit 1
+		fi
+		;;
+
+	*)
+        echo ""
+	Usage; 
+        ;;
+esac

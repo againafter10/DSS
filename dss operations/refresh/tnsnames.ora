@@ -1,0 +1,20 @@
+EMREP =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))
+    )
+    (CONNECT_DATA =
+      (SERVICE_NAME = emrep)
+    )
+  )
+
+adsweb =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = adsdx0011-vip.oracleads.com)(PORT = 1523))
+    (ADDRESS = (PROTOCOL = TCP)(HOST = adsdx0012-vip.oracleads.com)(PORT = 1523))
+    (LOAD_BALANCE = yes)
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = adswebap_adx.oracleads.com)
+    )
+  ) 

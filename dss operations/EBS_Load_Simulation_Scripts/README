@@ -1,0 +1,72 @@
+This directory includes scripts to simulate Concurrent Manager load for 
+OAM 11i demos.
+
+
+
+Concurrent Manager Load
+-----------------------
+
+1. Setup:  
+
+   These steps only need to be completed once, unless the database 
+   is refreshed to some previous state.
+
+
+   A. Run seed110.sql to create the concurrent program definitions required 
+      by the demo.
+  
+         sqlplus apps/apps@my_db @seed110
+
+
+   B. Run the buildview command to rebuild the worker view.
+
+         buildview apps/apps@my_db
+
+
+2. Purging Requests: 
+
+   You may want to purge the request data before your demo.  For demos, we
+   like to use higher refresh rates than would be practical in the real world.
+   The less data that the data gatherer has to sort through, the smoother
+   the demo will run.
+
+   The script "purge" will submit a concurrent request to purge request 
+   data. This request could take hours to complete, depending on the amount of
+   data in your system.
+
+      purge apps/apps@my_db
+
+
+3. Starting the Load:
+
+   The "simulated" load submits requests for PL/SQL Concurrent Programs which
+   sleep while they are in the "Running" state.  Thus your system can appear
+   to have many running requests with minimal resource consumption.
+
+   The script submit.sql can be run to submit demo jobs.  The effects of this
+   script are cumulative, multiple runs will increase the load.
+
+      sqlplus apps/apps@my_db @submit
+
+   The script submiti.sql will submit a set of incompatible programs, one of
+   which will run for 12 hours.  The purpose of this script is to guarantee 
+   that the user SYSADMIN will have a "Standby" request called "Purge Program
+   Statistics" for which there will be entries in the "Requests Waited On"
+   chart. 
+
+      sqlplus apps/apps@my_db @submiti
+
+
+4. Stopping the Load:
+
+   The script stopall.sql will stop all of the concurrent requests submitted
+   by the submit.sql and submiti.sql scripts.  Due to race conditions, it
+   might be necessary to run this script more than once to bring down all
+   of the requests.
+
+       sqlplus apps/apps@my_db @stopall
+
+
+
+
+

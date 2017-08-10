@@ -1,0 +1,244 @@
+#!/bin/bash
+#************************************************************************************************#
+# Script: democtl                                                                                #
+# Usage : Main Wrapper script to call component scripts for the  demo                            #
+# Usage:   $0 { start|stop|status } {cc|ebs|all} OR $0 verify {cc|ebs|all}                       #
+# When          Who              What                                                            #
+# ------------------------------------------------------------------                             #
+# 11-MPR-2012   ARCHANA JOSHI    Initial Version                                                 #
+#************************************************************************************************#
+
+#***** VERIFYING IF USER IS ROOT ****#
+ID=`id -u`
+if [ ${ID} -ne 0 ]; then
+       echo ""
+       echo "This script should be run as root user."
+       echo ""
+       exit
+fi
+
+. ~oracle/.bashrc
+
+#**** Functions Defined Here ****#
+
+# Function: Usage() :- To display how the script is to be used
+Usage () {
+
+        echo ""
+        echo "Usage: $0 { start|stop|status } {cc|ebs|all} OR  $0 verify {cc|ebs|all}"
+        echo ""
+}
+
+# Function: startAll() :- To Start all Processes under Component CC
+startAll () {
+        clear
+	echo "**************************************************"
+        echo "***** Starting All Components Under The Demo *****"
+        echo "**************************************************"
+
+        
+        COMMAND="${DEMO_HOME}/bin/ccctl start all"
+        ${COMMAND}
+        echo "**************************************************"
+        echo "**************************************************"
+        echo "**************************************************"
+        echo ""
+        echo ""
+
+        
+        COMMAND="ssh unit3516 ${DEMO_HOME}/bin/ebsctl start all"
+        ${COMMAND}
+        echo "**************************************************"
+        echo "**************************************************"
+        echo "**************************************************"
+        echo ""
+        echo ""
+	}
+        
+# Function: stopAll() :- To Stop all Processes under Component CC
+stopAll () {
+        clear
+        echo "**************************************************"
+        echo "***** Stopping all Components under APR Demo *****"
+        echo "**************************************************"
+             
+	COMMAND="${DEMO_HOME}/bin/ccctl stop all"
+	${COMMAND}
+        echo "**************************************************"
+        echo "**************************************************"
+        echo "**************************************************"
+        echo ""
+        echo ""
+
+
+
+	COMMAND="ssh unit3516 ${DEMO_HOME}/bin/ebsctl stop all"
+	${COMMAND}
+        echo "**************************************************"
+        echo "**************************************************"
+        echo "**************************************************"
+        echo ""
+        echo ""
+        
+      
+	}
+
+# Function: statusAll() :- To check status all Processes under Component CC
+statusAll () {
+        clear
+        echo "***************************************************************"
+        echo "***** Checking Status Of All Componencts Under This Demo ******"
+        echo "***************************************************************"
+             
+	COMMAND="${DEMO_HOME}/bin/ccctl status all"
+	${COMMAND}
+        echo "**************************************************"
+        echo "**************************************************"
+        echo "**************************************************"
+        echo ""
+        echo ""
+
+
+	COMMAND="ssh unit3516 ${DEMO_HOME}/bin/ebsctl status all"
+	${COMMAND}
+        echo "**************************************************"
+        echo "**************************************************"
+        echo "**************************************************"
+        echo ""
+        echo ""
+	exit;
+       
+	}
+
+
+#Function vefifyAll () :- To verify if components of CC and EBS are up
+vefifyAll () {
+        clear
+        echo "***************************************************************"
+        echo "***** Verifying Status for Components of CC and EBS ***********"
+        echo "***************************************************************"
+
+        COMMAND="${DEMO_HOME}/bin/ccctl verifyStart"
+        ${COMMAND}
+        echo "**************************************************"
+        echo "**************************************************"
+        echo "**************************************************"
+        echo ""
+        echo ""
+
+
+        COMMAND="ssh unit3516 ${DEMO_HOME}/bin/ebsctl verifyStart"
+        ${COMMAND}
+        echo "**************************************************"
+        echo "**************************************************"
+        echo "**************************************************"
+        echo ""
+        echo ""
+        exit;
+
+        }
+
+
+
+case "$1" in
+        'start')
+                case "$2" in
+                        'cc' )
+                        COMMAND="${DEMO_HOME}/bin/ccctl start all"
+                        ${COMMAND}
+                        ;;
+
+                        
+                        'ebs' )
+			COMMAND="ssh unit3516 ${DEMO_HOME}/bin/ebsctl start all"
+			${COMMAND}
+                        ;;
+
+
+
+
+                        'all' )
+                        startAll;
+                        ;;
+                *)
+                echo ""
+                Usage;
+                ;;
+                esac
+                ;;
+        'stop')
+                case "$2" in
+                        'cc' )
+                        COMMAND="${DEMO_HOME}/bin/ccctl stop all"
+                        ${COMMAND}
+                        ;;
+
+                        
+			'ebs' )
+			COMMAND="ssh unit3516 ${DEMO_HOME}/bin/ebsctl stop all"
+			${COMMAND}
+			;;
+
+
+                        'all' )
+                        stopAll;
+                        ;;
+                *)
+                echo ""
+                Usage;
+                ;;
+                esac
+                ;;
+        'status')
+                case "$2" in
+                        'cc' )
+                        COMMAND="${DEMO_HOME}/bin/ccctl status all"
+                        ${COMMAND}
+                        ;;
+
+                        
+			'ebs' )
+			COMMAND="ssh unit3516 ${DEMO_HOME}/bin/ebsctl status all"
+			${COMMAND}
+			;;
+
+
+
+                        'all' )
+                        statusAll;
+                        ;;
+                *)
+                echo ""
+                Usage;
+                ;;
+                esac
+		;;
+
+	'verify')
+		case "$2" in
+                        'cc' )
+			 COMMAND="${DEMO_HOME}/bin/ccctl verifyStart"
+			 ${COMMAND}
+			 ;;
+
+			'ebs' )
+			COMMAND="ssh unit3516 ${DEMO_HOME}/bin/ebsctl verifyStart"
+			${COMMAND}
+			;;
+
+			'all' )
+			verifyAll;
+			;;
+
+		*)
+                echo ""
+                Usage;
+                ;;
+                esac
+                ;;
+
+        *)
+        echo ""
+        Usage;
+        ;;
+esac

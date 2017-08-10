@@ -1,0 +1,90 @@
+#************************************************************************************************#
+# Script: UpdPwd                                                                                 #
+# usage: UpdPwd hostname.oracelads.com 01 user user_pwd demo_reference                           #
+# This script must be run as oracle                                                              #
+# This script updates the sysman password in Cloud Control repository and adsweb database        #
+# When          Who              What                                                            #
+# ------------------------------------------------------------------                             #
+# 28-MAY-2013   ARCHANA JOSHI    Initial Version                                                 #
+#************************************************************************************************#
+
+#!/bin/bash
+ID=`id -u`
+if [ ${ID} = 0 ]; then
+        echo "This script should be run as oracle user."
+        exit
+fi
+
+function echo2 {
+   echo ${1};
+   echo "${1}" >> ${logfile};
+}
+
+
+### Function 1
+### SYSMAN user password reset function
+sysmanpwdrst () {
+. $DEMO_HOME/profiles/cc/oms.profile
+echo "***** Stopping OMS `date` *****" >> $2
+echo2 >> $2
+emctl stop oms >> $2
+echo2 >> $2
+echo "***** Changing Sysman password `date` *****" >> $2
+echo2 >> $2
+emctl config oms -change_repos_pwd -use_sys_pwd -sys_pwd em12cdev  -new_pwd ${1} >>  $2
+echo2 >> $2
+echo "***** Stopping OMS -all `date` *****" >> $2
+echo2 >> $2
+emctl stop oms -all >> $2
+echo2 >> $2
+echo "***** Starting OMS `date` *****" >> $2
+echo2 >> $2
+emctl start oms >> $2
+echo2 >> $2
+echo ${1} >$DEMO_HOME/refresh/.sysman/.password
+echo "Current sysman changed to em12cdev"
+}
+
+
+
+#####################
+### Main Finction ###
+#####################
+if [ $# -eq 0 ]
+then
+echo "$0 : You must input hostname as argument "
+exit 1
+fi
+
+### copying the tnsnames.ora to oracle home $TNS_ADMIN
+cp /dss/operations/refresh/tnsnames.ora /app/oracle/product/11.2.0/dbhome_1/network/admin
+
+ 
+if [ "${3}" = "sysman" ]; then
+     username=${3}
+else
+    username=`expr substr $3 1 9`$2
+echo "username " $username
+fi
+
+logfile="${DL}/ResetPwd_$1.log"
+
+node_association=$1
+param_name=$4
+demo_reference=$5
+echo "parameters  $username,$node_association,$param_name,$demo_reference"
+#exit
+. $DEMO_HOME/profiles/refresh.profile
+
+password="em12cdev"
+echo $password
+
+### Changing password for sysman and change approval users
+sysmanpwdrst $password $logfile
+         if [ $? -ne 0 ]
+         then
+            echo2 "ERROR: Password update for sysman user failed"
+            exit 1;
+         else
+            echo2 "Password update for sysman user successful"
+         fi

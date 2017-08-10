@@ -1,0 +1,167 @@
+#!/bin/bash
+#************************************************************************************************#
+# Script: ebs1ctl  (64bit version - Inline with DMT)                                             #
+# Usage : Main Wrapper script to call service scripts for component EBS                          #
+# Usage:   $0 { start|stop|status } {ebs|agent|all}  OR   $0 verifyStart                         #
+# When          Who              What                                                            #
+# ------------------------------------------------------------------                             #
+# 11-MAR-2012   ARCHANA JOSHI    Initial Version                                                 #
+#************************************************************************************************#
+
+#***** VERIFYING IF USER IS ROOT ****#
+ID=`id -u`
+if [ ${ID} -ne 0 ]; then
+        echo ""
+        echo "This script should be run as root user."
+        echo ""
+        exit
+fi
+
+. ~applmgr/profile.demo
+
+#**** Functions Defined Here ****#
+
+# Function: Usage() :- To display how the script is to be used
+Usage () {
+
+        echo ""
+        echo "Usage: $0 { start|stop|status } {ebs|agent|all}/$0 verifyStart"
+        echo ""
+}
+
+# Function: startAll() :- To Start all Processes under Component EBS
+startAll () {
+        clear
+        cp /dss/operations/scripts/hosts /etc/hosts
+        rm  /etc/emagent
+        rm /etc/pam.d/emagent
+        echo "Starting all Processes under Component EBS"
+        COMMAND="${DEMO_HOME}/bin/ebs/ebs_start.sh"
+        ${COMMAND}
+        COMMAND="${DEMO_HOME}/bin/ebs/agent_start.sh"
+        su - applmgr -c "${COMMAND}"
+        cp /dss/operations/scripts/hosts /etc/hosts
+        
+}
+
+# Function: stopAll() :- To Stop all Processes under Component EBS 
+stopAll () {
+        clear
+        echo "Stopping all Processes under Component EBS"
+        COMMAND="${DEMO_HOME}/bin/ebs/ebs_stop.sh"
+        ${COMMAND}
+        COMMAND="${DEMO_HOME}/bin/ebs/agent_stop.sh"
+        su - applmgr -c "${COMMAND}"
+       
+}
+
+# Function: statusAll() :- To check status all Processes under Component EBS
+statusAll () {
+        clear
+        echo "***** Checking Status of all Processes under Component EBS ******"
+        COMMAND="${DEMO_HOME}/bin/ebs/ebs_status.sh"
+        ${COMMAND}
+        COMMAND="${DEMO_HOME}/bin/ebs/agent_status.sh"
+        su - applmgr  -c "${COMMAND}"
+        
+}
+
+
+
+# Function: verifystart() :- To check status all Processes under Component EBS
+verifystart () {
+        clear
+        COMMAND="${DEMO_HOME}/bin/ebs/verifyStart"
+        "${COMMAND}"
+}
+
+
+#### MAIN ####
+### copy the correct hosts file from /dss/operations/scripts/hosts to /etc/hosts
+cp /dss/operations/scripts/hosts /etc/hosts
+
+case "$1" in
+        'start')
+                case "$2" in
+
+                        'ebs' )
+                        COMMAND="${DEMO_HOME}/bin/ebs/ebs_start.sh"
+                        ${COMMAND}
+                        ;;
+
+                        'agent' )
+                        COMMAND="${DEMO_HOME}/bin/ebs/agent_start.sh"
+                        su - applmgr  -c "${COMMAND}"
+                        ;;
+
+
+
+                        'all' )
+                        startAll;
+                        ;;
+                *)
+                echo ""
+                Usage;
+                ;;
+                esac
+                ;;
+        'stop')
+                case "$2" in
+
+                        'ebs' )
+                        COMMAND="${DEMO_HOME}/bin/ebs/ebs_stop.sh"
+                        ${COMMAND}
+                        ;;
+
+                        'agent' )
+                        COMMAND="${DEMO_HOME}/bin/ebs/agent_stop.sh"
+                        su - applmgr  -c "${COMMAND}"
+                        ;;
+
+                        'all' )
+                        stopAll;
+                        ;;
+                *)
+                echo ""
+                Usage;
+                ;;
+                esac
+                ;;
+        'status')
+                case "$2" in
+
+                        'ebs' )
+                        COMMAND="${DEMO_HOME}/bin/ebs/ebs_status.sh"
+                        ${COMMAND}
+                        ;;
+
+                        'agent' )
+                        COMMAND="${DEMO_HOME}/bin/ebs/agent_status.sh"
+                        su - applmgr -c "${COMMAND}"
+                        ;;
+
+
+
+                        'all' )
+                        statusAll
+                        ;;
+                *)
+                echo ""
+                Usage;
+                ;;
+                esac
+                ;;
+        'verifyStart')
+                verifystart
+		if [ $? -eq 0 ]; then
+                exit 0
+                else
+                exit 1
+                fi
+                ;;
+
+        *)
+        echo ""
+        Usage;
+        ;;
+esac

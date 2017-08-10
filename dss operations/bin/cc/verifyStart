@@ -1,0 +1,109 @@
+#************************************************************************************************#
+# Script: verifyStart                                                                            #
+# Usage : script to verify start status of CC components                                         #
+# Usage:                                                                                         #
+# When          Who              What                                                            #
+# ------------------------------------------------------------------                             #
+# 21-APR-2012   ARCHANA JOSHI    Initial Version                                                 #
+#************************************************************************************************#
+#!/bin/bash
+ID=`id -u`
+if [ ${ID} -ne 0 ]; then
+echo "This script should be run as root "
+        exit
+fi
+let failed=0;
+ 
+. ~oracle/.bashrc
+export logfile=$DL/CC_status.log
+
+newline="\n"
+echo -e $newline >> $logfile
+
+agent_status()
+{
+
+ COMMAND="$1/bin/cc/agent_status.sh"
+ su - oracle -c "${COMMAND}" 
+
+}
+
+oms_status()
+{
+
+ COMMAND="$1/bin/cc/oms_status.sh"
+ su - oracle -c "${COMMAND}" 
+}
+
+echo -e $newline >> $logfile
+echo "========================================================================================"|tee -a $logfile
+echo "Verifying Status of  ALL CC COMPONENTS  on `hostname` `date`"  $logfile |tee -a $logfile
+echo "========================================================================================" |tee -a $logfile
+echo -e $newline |tee -a $logfile
+
+#-------------------------------
+#Verifying  DB  startup 
+#-------------------------------
+
+status=`ps -ef|grep -i pmon_emrep|grep -v grep|wc -l`
+if [ $status = 1 ]; then
+echo "DB started OK " |tee -a $logfile
+echo -e $newline |tee -a $logfile
+else
+echo "DB check  failed" |tee -a $logfile
+echo -e $newline |tee -a $logfile
+let failed=failed+1
+fi
+
+
+
+#-------------------------------
+#Verifying  LSNR  startup 
+#-------------------------------
+status=`ps -ef|grep -i tns|grep -v grep|wc -l`
+if [ $status = 1 ]; then
+echo "Listener started OK " |tee -a $logfile
+echo -e $newline |tee -a $logfile
+else
+echo "Listener check  failed" |tee -a $logfile
+echo -e $newline |tee -a $logfile
+let failed=failed+1
+fi
+
+
+#-------------------------------
+#Verifying  OMS  startup 
+#-------------------------------
+status=`oms_status $DEMO_HOME`
+if [ `echo $status  |grep -i running|wc -l` -eq 1 ]; then
+echo  "OMS  started OK  " |tee -a $logfile
+echo -e $newline |tee -a $logfile
+else
+echo  "OMS check  failed" |tee -a $logfile
+echo -e $newline |tee -a $logfile
+let failed=failed+1
+fi
+
+
+
+#-------------------------------
+#Verifying  AGENT  startup 
+#-------------------------------
+status=`agent_status $DEMO_HOME`
+if [ `echo $status  |grep -i ready|wc -l` -eq 1 ]; then
+echo  "Agent started OK  " |tee -a $logfile
+echo -e $newline |tee -a $logfile
+else
+echo  "Agent check  failed" |tee -a $logfile
+echo -e $newline |tee -a $logfile
+let failed=failed+1
+fi
+
+
+if [ $failed -eq 0 ]; then 
+echo "All Components of Cloud Control Started Successfully" |tee -a $logfile
+exit 0 
+else 
+echo  "${failed} Component(s) Failed to Start for Cloud Control"  |tee -a $logfile
+exit 1
+fi 
