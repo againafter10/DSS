@@ -1,0 +1,3 @@
+ls -ltr
+mv apache-tomcat-8.5.8 /Applications/
+ls

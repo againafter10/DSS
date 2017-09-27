@@ -1,0 +1,4 @@
+name age place
+alice 21 agra
+ryan 30 santa
+max 40 newcastle

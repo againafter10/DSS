@@ -1,0 +1,10 @@
+tar -xvf apache-tomcat-8.5.8.tar.gz 
+ls /Applications/
+ls -ltr
+mv apache-tomcat-8.5.8 /Applications/
+ls
+cd /Applications/
+ls
+987-123-4567
+123 456 7890
+(123) 456-7890

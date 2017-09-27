@@ -1,0 +1,500 @@
+tar -xvf apache-tomcat-8.5.8.tar.gz 
+ls /Applications/
+ls -ltr
+mv apache-tomcat-8.5.8 /Applications/
+ls
+cd /Applications/
+ls
+mv apache-tomcat-8.5.8 tomcat
+ls tomcat/
+mv tomcat /Library/
+sudo mv tomcat /Library/
+ls tom
+cd /Library/
+ls
+mv tomcat /Applications/
+sudo mv tomcat /Applications/
+ls
+cd /Applications/
+ls
+mv tomcat /Applications/
+sudo chown -R nobody:nobody /Applications/tomcat
+ls -ltr 
+mv tomcat /Applications/
+cd /Applications/tomcat/bin
+sudo cd /Applications/tomcat/bin
+ls
+pwd
+cd tomcat/
+ls
+cd bin
+ls
+ls -ltr
+id
+sudo cd bin
+pwd
+ls
+pwd
+sudo su
+pwd
+cd bin
+sudo -u nobody ./startup.sh
+ls
+cd bin
+sudo -u nobody ./startup.sh
+ls
+sudo su bin
+sudo cd bin
+ls
+sudo su
+cd /Applications/
+cd tomcat/
+ls
+cd bin
+ls
+sudo su
+pip
+curl -O https://bootstrap.pypa.io/get-pip.py
+sudo curl -O https://bootstrap.pypa.io/get-pip.py
+python3 get-pip.py
+pip install matplotlib
+python3 get-pip.py
+pip install matplotlib
+pip3 install matplotlib
+pwd
+cd 
+cd Vo
+cd /Volumes/
+ls
+cd Data\ SSD/
+ls
+cd Fall2016/
+cd Virtualisation/
+ls
+cd Project/
+mkdir CLI
+cd CLI/
+ls
+vi test.py
+vi test.py
+python test
+ls
+python test.py
+vi test.py
+python test.py
+ls -ltr
+lscpu
+lscpuinfo
+cpuinfo
+vi test.py
+python test.py
+diskutil list
+lsof -i
+system_profiler |more
+du -s /Applications/* | sort -nr | head
+pwd
+du -s /Volumes/Data SSD/Fall2016/Virtualisation/Project/* | sort -nr | head |cut -f1
+pwd
+cd ..
+du -s `pwd` |sort -nr |head |cut -f1
+du -s /Volumes/Data\ SSD/Fall2016/Virtualisation/Project/* | sort -nr | head |cut -f1
+du -s /Volumes/Data\ SSD/Fall2016/Virtualisation/Project/* | sort -nr | head 
+cd CLI
+ls -ltr
+dustat.py
+touch dustat.py
+du -s /Volumes/Data\ SSD/Fall2016/Virtualisation/Project/* | sort -nr | head >>du.txt
+ls
+pwd
+ls -ltr
+cat du.txt 
+ls
+python dustat.py 
+python dustat.py 
+du -s /Volumes/Data\ SSD/Fall2016/Virtualisation/Project/* | sort -nr | head |cut -f1 >>size.txt
+du -s /Volumes/Data\ SSD/Fall2016/Virtualisation/Project/* | sort -nr | head |cut -f2 >> name.txt
+ls -ltr
+cat size.txt 
+cat name.txt 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+cat name.txt 
+vi name.txt 
+python dustat.py 
+vi name.txt 
+python dustat.py 
+python dustat.py 
+ls *.txt
+cat name.txt 
+cat name.txt |grep id
+cat du.txt |grep id
+cat du.txt 
+cat size.txt 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+cat size.txt |wc -l
+cat name.txt |wc -l
+python dustat.py 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+sudo apt-get install python-numpy
+python dustat.py 
+python dustat.py 
+python dustat.py 
+python dustat.py 
+lscpu
+sysctl hw
+sysctl
+sysctl hw
+sysctl hw|grep cpu
+sysctl hw|grep physical
+sysctl hw|grep logical
+cd .etc
+cd /etc
+cat hosts
+vi hosts
+lsof
+lsof|grep 3306
+lsof|grep mysql
+sudo service mysql stop
+service mysql stop
+service
+mysql stop
+mysql 
+ps ux|grep -i mysql
+sudo su
+ls
+cd Downloads/
+ls
+cd apache-tomcat-7.0.73
+cd bin/
+chmod 777 catalina.sh 
+ls
+./shutdown.sh
+sudo ./shutdown.sh
+sudo /shutdown.sh
+chmod +x shutdown.sh
+./shitdown.sh
+./shutdown.sh
+./shutdown.sh
+cd ..
+cd ..
+chmod 777 apache-tomcat-7.0.73
+cd /etc/pro
+cd proc
+ls
+pwd
+cd /etc
+ls
+cd pro
+cd proc
+ls
+ls p
+pwd
+sudo su
+ps -ef --forest
+id
+wd
+pwd
+ps -ef
+ps -ef -forest
+ps -ef
+ps -ef -forest
+ps -ef|grep init
+ps -ef|grep sbin
+ps -ef|grep sbin|grep init
+ps -ef|grep init|grep 1
+ip a
+ip
+uname
+crontab -l
+crontab -e
+python --version
+brew --version
+pip --version
+pwd
+ls
+dir
+ls
+mkdir scripts
+cd scripts/
+vi oddnumbers.sh
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+sh -x oddnumbers.sh 
+vi oddnumbers.sh 
+sh -x oddnumbers.sh 
+vi oddnumbers.sh 
+sh -x oddnumbers.sh 
+vi oddnumbers.sh 
+sh -x oddnumbers.sh 
+vi oddnumbers.sh 
+sh -x oddnumbers.sh 
+vi oddnumbers.sh 
+sh -x oddnumbers.sh 
+sh -x oddnumbers.sh 
+vi oddnumbers.sh 
+sh -x oddnumbers.sh 
+vi oddnumbers.sh 
+sh -x oddnumbers.sh 
+vi oddnumbers.sh 
+sh -x oddnumbers.sh 
+sh -x oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+vi oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+read char; echo -e "YES\nNO\n" | grep -i $char
+read char; echo -e "YES\nNO\n" | grep -i $char
+man echo
+read char; echo -e "YES\nNO\n" | grep -i $char
+read char; echo -e "YES\nNO\n" | grep -i $char
+read char; echo -e "YES\nNO\n" | grep -i $char
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+read char|grep -i y
+read char|grep -i y
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+sh oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+sh oddnumbers.sh 
+sh oddnumbers.sh 
+sh oddnumbers.sh 
+vi oddnumbers.sh 
+sh oddnumbers.sh 
+sh oddnumbers.sh 
+cat odd
+cat oddnumbers.sh 
+vi triangle
+sh triangle 
+vi triangle
+sh triangle 
+vi triangle
+sh triangle 
+vi triangle
+sh triangle 
+vi triangle
+sh -x triangle 
+vi triangle
+sh -x triangle 
+vi triangle
+sh -x triangle 
+vi triangle
+sh -x triangle 
+vi triangle
+sh -x triangle 
+vi triangle
+sh -x triangle 
+vi triangle
+sh -x triangle 
+vi triangle
+sh -x triangle 
+vi triangle
+sh -x triangle 
+sh triangle 
+sh -x triangle 
+vi triangle
+sh -x triangle 
+vi triangle
+sh -x triangle 
+vi triangle
+sh -x triangle 
+vi triangle
+sh -x triangle 
+vi triangle
+sh -x triangle 
+man bc
+vi triangle
+sh -x triangle 
+vi triangle
+sh -x triangle 
+vi triangle
+sh -x triangle 
+sh -x triangle 
+vi triangle
+sh -x triangle 
+sh triangle 
+cat triangle 
+vi avg.sh
+sh avg.sh 
+vi avg.sh
+sh avg.sh 
+sh -x avg.sh 
+vi avg.sh 
+sh -x avg.sh 
+vi avg.sh 
+sh avg.sh 
+vi avg.sh 
+sh avg.sh 
+vi avg.sh 
+sh avg.sh 
+vi avg.sh 
+sh avg.sh 
+vi avg.sh 
+sh avg.sh 
+vi avg.sh 
+vi avg.sh 
+sh avg.sh 
+vi avg.sh 
+sh avg.sh 
+vi avg.sh 
+sh avg.sh 
+5
+6
+vi avg.sh 
+sh avg.sh 
+vi avg.sh 
+sh avg.sh 
+vi avg.sh 
+sh avg.sh 
+vi avg.sh 
+sh avg.sh 
+cat avg.sh 
+sh avg.sh 
+vi avg.sh 
+sh avg.sh 
+vi avg.sh 
+sh avg.sh 
+vi avg.sh 
+sh avg.sh 
+vi avg.sh 
+sh avg.sh 
+vi avg.sh 
+sh avg.sh 
+vi avg.sh 
+sh avg.sh 
+vi avg.sh 
+sh avg.sh 
+vi avg.sh 
+sh avg.sh 
+2
+9
+8
+vi avg.sh 
+sh avg.sh 
+2
+vi avg.sh 
+sh avg.sh 
+vi avg.sh 
+sh avg.sh 
+vi avg.sh 
+sh avg.sh 
+cat avg.sh 
+ifconfig
+ping 172.16.128.129
+ifconfig
+python
+tail /etc/passwd
+cut -f1,3 -d : /etc/passwd
+tail /etc/passwd
+cur -c1 /etc/passwd
+cut -c1-5 /etc/passwd
+cat /dev/stdin
+cur -c3 /dev/stdin
+cut -c3 /dev/stdin
+cut -c2,c7 /etc/passwd
+cut -c2,c7 -d : /etc/passwd
+cut -c2,7 -d : /etc/passwd
+cut -c2,7  /etc/passwd
+python -version
+python 
+python --version
+pwd
+ls
+cd App
+cd ..
+ls
+cd -
+ls
+cd Applications/
+ls
+ls -ltr
+cd 
+pwd
+ls
+cd Desktop/
+ls
+cd google-cloud-sdk/
+ls
+./install.sh
+pwd
+ls
+cd Desktop/
+ls
+cd google-cloud-sdk/
+./install.sh
+./google-cloud-sdk/bin/gcloud init
+pwd
+cd bin
+./gcloud init
+ls
+cd ..
+ls
